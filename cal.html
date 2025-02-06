@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .calculator {
+            width: 320px;
+            background-color: #8dec4d;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .screen {
+            background-color: #b33232;
+            color: white;
+            text-align: right;
+            font-size: 36px;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            height: 60px;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            background-color: #444;
+            color: white;
+            font-size: 24px;
+            border: none;
+            padding: 20px;
+            border-radius: 60%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0a7191;
+        }
+        .operator {
+            background-color:rgb(226, 176, 68);
+        }
+        .equal {
+            background-color: #4CAF50;
+        }
+        .clear {
+            background-color: #df1809;
+        }
+        .delete {
+            background-color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="screen" id="screen">0</div>
+        <div class="buttons">
+            <button class="clear" id="clear">C</button>
+            <button class="delete" id="delete">DEL</button>
+            <button class="operator" id="divide">/</button>
+            <button class="operator" id="multiply">*</button>
+            <button id="7">7</button>
+            <button id="8">8</button>
+            <button id="9">9</button>
+            <button class="operator" id="add">+</button>
+            <button id="4">4</button>
+            <button id="5">5</button>
+            <button id="6">6</button>
+            <button class="operator" id="subtract">-</button>
+            <button id="1">1</button>
+            <button id="2">2</button> 
+            <button id="3">3</button>
+            <button id="0">0</button>
+            <button id="decimal">.</button>
+            <button class="equal" id="equal">=</button>
+        </div>
+    </div>
+
+    <script>
+        let screen = document.getElementById('screen');
+let currentInput = '0';
+let previousInput = '';
+let operator = null;
+
+function updateScreen(value) {
+    screen.textContent = value;
+}
+
+function handleNumberClick(number) {
+    if (currentInput === '0') {
+        currentInput = number;
+    } else {
+        currentInput += number;
+    }
+    updateScreen(currentInput);
+}
+
+function handleOperatorClick(op) {
+    if (previousInput === '') {
+        previousInput = currentInput;
+        currentInput = '';
+        operator = op;
+    } else {
+        calculate();
+        operator = op;
+        previousInput = screen.textContent;
+        currentInput = '';
+    }
+}
+
+function handleClearClick() {
+    currentInput = '0';
+    previousInput = '';
+    operator = null;
+    updateScreen(currentInput);
+}
+
+function handleDeleteClick() {
+    if (currentInput.length > 1) {
+        currentInput = currentInput.slice(0, -1);
+    } else {
+        currentInput = '0';
+    }
+    updateScreen(currentInput);
+}
+
+function handleEqualClick() {
+    if (operator !== null && previousInput !== '') {
+        calculate();
+        operator = null;
+        previousInput = '';
+    }
+}
+
+function calculate() {
+    let result;
+    let num1 = parseFloat(previousInput);
+    let num2 = parseFloat(currentInput);
+
+    switch (operator) {
+        case '+':
+            result = num1 + num2;
+            break;
+        case '-':
+            result = num1 - num2;
+            break;
+        case '*':
+            result = num1 * num2;
+            break;
+        case '/':
+            if (num2 === 0) {
+                result = 'Error';
+            } else {
+                result = num1 / num2;
+            }
+            break;
+        default:
+            return;
+    }
+
+    currentInput = result.toString();
+    updateScreen(currentInput);
+}
+
+document.getElementById('clear').addEventListener('click', handleClearClick);
+document.getElementById('equal').addEventListener('click', handleEqualClick);
+document.getElementById('delete').addEventListener('click', handleDeleteClick);
+
+const numberButtons = document.querySelectorAll('button:not(.operator):not(.clear):not(.equal):not(.delete)');
+numberButtons.forEach(button => {
+    button.addEventListener('click', () => handleNumberClick(button.textContent));
+});
+
+document.getElementById('add').addEventListener('click', () => handleOperatorClick('+'));
+document.getElementById('subtract').addEventListener('click', () => handleOperatorClick('-'));
+document.getElementById('multiply').addEventListener('click', () => handleOperatorClick('*'));
+document.getElementById('divide').addEventListener('click', () => handleOperatorClick('/'));
+
+    </script>
+</body>
+</html>
